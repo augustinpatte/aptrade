@@ -1,0 +1,15 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "aptrade",
+  "description": "APtrade skills for Claude Code (also read by Grok Build)",
+  "owner": {"name": "Augustin Patte", "url": "https://github.com/augustinpatte"},
+  "plugins": [
+    {
+      "name": "aptrade",
+      "description": "Research a portfolio against the S&P 500, choose an allocation, rebalance a real or paper Alpaca account under hard risk limits, monitor it, and read news, filings and congressional disclosures. Real-money orders always need a code typed by the user.",
+      "source": "./",
+      "category": "productivity",
+      "homepage": "https://github.com/augustinpatte/aptrade"
+    }
+  ]
+}

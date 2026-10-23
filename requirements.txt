@@ -1,0 +1,6 @@
+# For Streamlit Community Cloud (the public demo). Locally, `pip install -e .` is enough.
+streamlit>=1.46
+pandas>=2.1
+numpy>=1.26
+alpaca-py>=0.40
+certifi

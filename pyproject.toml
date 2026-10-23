@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aptrade"
+version = "0.1.0"
+description = "Test portfolios and strategies honestly against the S&P 500."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Augustin Patte" }]
+requires-python = ">=3.10"
+dependencies = [
+    "alpaca-py>=0.40",
+    "certifi",
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "streamlit>=1.46",
+]
+
+[project.scripts]
+aptrade = "aptrade.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["aptrade*"]

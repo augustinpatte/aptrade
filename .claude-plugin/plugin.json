@@ -1,0 +1,10 @@
+{
+  "name": "aptrade",
+  "description": "APtrade: 11 skills to research, build, rebalance and monitor a real portfolio at Alpaca, tested against the S&P 500, with hard risk limits and human approval for real money.",
+  "version": "1.0.0",
+  "author": {"name": "Augustin Patte", "url": "https://github.com/augustinpatte"},
+  "homepage": "https://github.com/augustinpatte/aptrade",
+  "repository": "https://github.com/augustinpatte/aptrade",
+  "license": "MIT",
+  "keywords": ["investing", "portfolio", "rebalancing", "backtesting", "alpaca", "risk-management"]
+}

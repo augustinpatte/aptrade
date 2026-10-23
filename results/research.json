@@ -1,0 +1,112 @@
+{
+ "updated": "2026-10-22",
+ "data": {
+  "en": "Alpaca SIP bars. Intraday: 5-minute bars, 50 US stocks and ETFs, Oct 2024 to Oct 2026. Daily: 26 ETFs, Jan 2016 to Oct 2026. Every simulated trade pays 3 bps per side.",
+  "fr": "Données Alpaca SIP. Intraday : bougies de 5 minutes, 50 actions et ETF américains, oct. 2024 à oct. 2026. Journalier : 26 ETF, janv. 2016 à oct. 2026. Chaque transaction simulée paie 3 points de base par côté."
+ },
+ "findings": {
+  "en": [
+   "A fixed diversified allocation (part SPY, part bonds, gold, commodities and international) kept about two thirds of the S&P 500's return with about two thirds of its worst drop, with no trading signal at all.",
+   "Over several days to weeks, trading costs become small; intraday, they eat 15 to 20% of the typical move.",
+   "Timing signals (trend, mean reversion, rotation) changed the shape of the risk more than the return: trend following cut drawdowns sharply but gave up most of a bull market.",
+   "The S&P 500 itself remained the hardest benchmark to beat on a risk-adjusted basis in this period."
+  ],
+  "fr": [
+   "Une allocation diversifiée fixe (une part de SPY, le reste en obligations, or, matières premières et international) a gardé environ deux tiers du rendement du S&P 500 pour environ deux tiers de sa pire baisse, sans aucun signal de trading.",
+   "Sur plusieurs jours ou semaines, les frais deviennent faibles ; en intraday, ils mangent 15 à 20 % du mouvement typique.",
+   "Les signaux de timing (tendance, retour à la moyenne, rotation) ont changé la forme du risque plus que le rendement : le suivi de tendance a fortement réduit les baisses mais laissé passer l'essentiel d'un marché haussier.",
+   "Le S&P 500 lui-même est resté la référence la plus dure à battre en rendement ajusté du risque sur la période."
+  ]
+ },
+ "guardrails": {
+  "en": [
+   ["Rules written before the data", "Every approach, its parameters and its success target were committed in PREREGISTRATION.md before the data was downloaded. No tuning after the fact."],
+   ["A reserved test period", "The most recent 25% of days are locked away and never used to choose anything; each look at them is counted."],
+   ["Walk-forward", "When parameters are compared, the winner is chosen on the past and scored on data it never saw."],
+   ["Realistic trading", "Signals use closing prices; orders fill at the next open; 3 bps per side on every dollar traded; gaps through a stop fill at the gap."],
+   ["No leverage, no shorting", "Portfolios hold at most 100% of their value; whatever is not invested sits in 1-3 month T-bills (BIL)."],
+   ["Hard limits on risk (intraday)", "At most 1% of equity at risk per trade, 3% daily loss, 5 positions, 10 trades a day, written in code and impossible to raise from the command line."],
+   ["Honest statistics", "Confidence intervals by block bootstrap; the bar is raised for every extra idea tested, so luck is not mistaken for skill."],
+   ["No look-ahead", "A test wrecks every price after a given day and checks that no earlier decision changes."]
+  ],
+  "fr": [
+   ["Règles écrites avant les données", "Chaque approche, ses paramètres et son objectif ont été versionnés dans PREREGISTRATION.md avant le téléchargement des données. Aucun réglage après coup."],
+   ["Une période de test réservée", "Les 25 % de jours les plus récents sont mis de côté et ne servent jamais à choisir ; chaque consultation est comptée."],
+   ["Walk-forward", "Quand des paramètres sont comparés, le gagnant est choisi sur le passé et noté sur des données qu'il n'a jamais vues."],
+   ["Trading réaliste", "Signaux sur les clôtures ; ordres exécutés à l'ouverture suivante ; 3 points de base par côté sur chaque dollar échangé ; un gap au-delà d'un stop est exécuté au prix du gap."],
+   ["Ni levier, ni vente à découvert", "Un portefeuille détient au plus 100 % de sa valeur ; le reste est placé en bons du Trésor à 1-3 mois (BIL)."],
+   ["Limites de risque en dur (intraday)", "Au plus 1 % du capital risqué par trade, 3 % de perte par jour, 5 positions, 10 trades par jour, écrits dans le code et impossibles à relever depuis la ligne de commande."],
+   ["Statistiques honnêtes", "Intervalles de confiance par bootstrap par blocs ; la barre monte à chaque idée supplémentaire testée, pour ne pas confondre chance et talent."],
+   ["Aucun regard sur le futur", "Un test détruit tous les prix après une date et vérifie qu'aucune décision antérieure ne change."]
+  ]
+ },
+ "approaches": [
+  {
+   "id": "A", "key": "alloc", "results_key": "alloc_50", "verdict": "FAIL", "target_met": false, "horizon": {"en": "Years, rebalanced monthly", "fr": "Années, rééquilibré chaque mois"},
+   "name": {"en": "Diversified allocation (the slider)", "fr": "Allocation diversifiée (le curseur)"},
+   "tagline": {"en": "Choose your share of stocks; the rest is spread across bonds, gold, commodities and international.", "fr": "Choisis ta part d'actions ; le reste est réparti entre obligations, or, matières premières et international."},
+   "how": {"en": "x% SPY, (100 - x)% in 15 ETFs weighted by inverse volatility, back to target every month-end. The 50% version was tested as H4.", "fr": "x % de SPY, (100 - x) % dans 15 ETF pondérés par l'inverse de leur volatilité, remis à la cible chaque fin de mois. La version 50 % a été testée comme H4."},
+   "pros": {"en": ["Simplest approach, about one rebalance a month and very low costs", "Cut the worst drop by about a third at 50% SPY", "Held up as well as the signal-based blend, with a third of the trading"], "fr": ["Approche la plus simple, environ un rééquilibrage par mois et des frais très faibles", "A réduit la pire baisse d'environ un tiers à 50 % de SPY", "A tenu aussi bien que le mélange à signal, avec trois fois moins de transactions"]},
+   "cons": {"en": ["Less return than SPY in a bull market, roughly in proportion to the bond share", "Bonds and stocks can fall together, as in 2022"], "fr": ["Moins de rendement que le SPY en marché haussier, à peu près en proportion de la part d'obligations", "Obligations et actions peuvent baisser ensemble, comme en 2022"]},
+   "risk": {"en": "Always fully invested in 16 ETFs; the largest single line is SPY at the chosen share. No leverage.", "fr": "Toujours investi dans 16 ETF ; la plus grosse ligne est le SPY à la part choisie. Sans levier."},
+   "target": {"en": "At 50%: a drawdown at most 60% of SPY's, excess Sharpe within 0.10 of SPY's, at least half its return.", "fr": "À 50 % : une baisse max d'au plus 60 % de celle du SPY, un Sharpe hors cash à 0,10 près du SPY, au moins la moitié de son rendement."},
+   "outcome": {"en": "Return and Sharpe targets met; drawdown target narrowly missed (23.6% vs 20.3% in research, 12.2% vs 11.3% in the reserved period).", "fr": "Objectifs de rendement et de Sharpe atteints ; objectif de baisse max manqué de peu (23,6 % contre 20,3 % en recherche, 12,2 % contre 11,3 % sur la période réservée)."}
+  },
+  {
+   "id": "H1", "key": "trend", "results_key": "trend", "verdict": "WEAK", "target_met": false, "horizon": {"en": "Weeks to months", "fr": "Semaines à mois"},
+   "name": {"en": "Trend following", "fr": "Suivi de tendance"},
+   "tagline": {"en": "Stay in what is rising, step aside from what is falling.", "fr": "Rester dans ce qui monte, sortir de ce qui baisse."},
+   "how": {"en": "15 diversified ETFs; each is held while its 3-month return is positive, weighted by inverse volatility; the rest goes to T-bills. Rebalanced monthly.", "fr": "15 ETF diversifiés ; chacun est gardé tant que son rendement sur 3 mois est positif, pondéré par l'inverse de sa volatilité ; le reste va en bons du Trésor. Rééquilibré chaque mois."},
+   "pros": {"en": ["Smallest drops of all: max drawdown around 8 to 12% vs 34% for SPY", "Risk-adjusted return close to SPY's", "Steps aside in long bear markets"], "fr": ["Les plus petites baisses : baisse max d'environ 8 à 12 % contre 34 % pour le SPY", "Rendement ajusté du risque proche du SPY", "Se met à l'écart dans les longs marchés baissiers"]},
+   "cons": {"en": ["Much lower return in bull markets (around 4% a year in research)", "Half the time in cash on average", "Its edge over SPY was not statistically significant"], "fr": ["Rendement bien plus faible en marché haussier (environ 4 % par an en recherche)", "La moitié du temps en cash en moyenne", "Son avantage sur le SPY n'était pas statistiquement significatif"]},
+   "risk": {"en": "Up to 15 lines, none dominant; often half in T-bills. Low volatility (about 4% a year).", "fr": "Jusqu'à 15 lignes, aucune dominante ; souvent à moitié en bons du Trésor. Volatilité faible (environ 4 % par an)."},
+   "target": {"en": "A higher Sharpe than SPY with a 90% confidence interval above zero, and a smaller drawdown.", "fr": "Un Sharpe supérieur au SPY avec un intervalle de confiance à 90 % au-dessus de zéro, et une baisse max plus faible."},
+   "outcome": {"en": "Higher Sharpe (0.82 vs 0.74) and much smaller drawdown (8% vs 34%) out of sample, but the interval included zero.", "fr": "Sharpe plus élevé (0,82 contre 0,74) et baisse max bien plus faible (8 % contre 34 %) hors échantillon, mais l'intervalle incluait zéro."}
+  },
+  {
+   "id": "H3", "key": "blend", "results_key": "blend", "verdict": "FAIL", "target_met": false, "horizon": {"en": "Years, rebalanced monthly", "fr": "Années, rééquilibré chaque mois"},
+   "name": {"en": "Half S&P 500, half trend following", "fr": "Moitié S&P 500, moitié suivi de tendance"},
+   "tagline": {"en": "The market's engine with a shock absorber.", "fr": "Le moteur du marché avec un amortisseur."},
+   "how": {"en": "50% SPY + 50% the trend-following portfolio, back to 50/50 every month-end.", "fr": "50 % SPY + 50 % du portefeuille de suivi de tendance, remis à 50/50 chaque fin de mois."},
+   "pros": {"en": ["About two thirds of SPY's return with about 60% of its worst drop", "Very stable from one period to the next", "Sharpe at least as good as SPY's in research"], "fr": ["Environ deux tiers du rendement du SPY pour environ 60 % de sa pire baisse", "Très stable d'une période à l'autre", "Sharpe au moins aussi bon que le SPY en recherche"]},
+   "cons": {"en": ["Three times the trading of the plain diversified allocation for a similar result", "Still lags SPY in strong bull markets"], "fr": ["Trois fois plus de transactions que l'allocation diversifiée simple pour un résultat proche", "Reste derrière le SPY en marché très haussier"]},
+   "risk": {"en": "Half in SPY at all times; the other half spread over up to 15 ETFs or T-bills.", "fr": "Moitié en SPY en permanence ; l'autre moitié répartie sur jusqu'à 15 ETF ou en bons du Trésor."},
+   "target": {"en": "A drawdown at most 60% of SPY's, excess Sharpe within 0.10 of SPY's, at least half its return.", "fr": "Une baisse max d'au plus 60 % de celle du SPY, un Sharpe hors cash à 0,10 près du SPY, au moins la moitié de son rendement."},
+   "outcome": {"en": "Return and Sharpe targets met; drawdown target missed by 0.2 points, twice (20.5% vs 20.3%, 11.5% vs 11.3%).", "fr": "Objectifs de rendement et de Sharpe atteints ; objectif de baisse max manqué de 0,2 point, deux fois (20,5 % contre 20,3 %, 11,5 % contre 11,3 %)."}
+  },
+  {
+   "id": "H5", "key": "rotation", "results_key": "rotation", "verdict": "FAIL", "target_met": false, "horizon": {"en": "Months", "fr": "Mois"},
+   "name": {"en": "Momentum rotation", "fr": "Rotation par momentum"},
+   "tagline": {"en": "Hold this year's three strongest asset classes.", "fr": "Détenir les trois classes d'actifs les plus fortes de l'année."},
+   "how": {"en": "Each month, the 3 of 15 ETFs with the best 12-month return, a third each, if they beat T-bills; otherwise T-bills.", "fr": "Chaque mois, les 3 ETF sur 15 au meilleur rendement sur 12 mois, un tiers chacun, s'ils battent les bons du Trésor ; sinon, bons du Trésor."},
+   "pros": {"en": ["Highest return in the reserved period: +69% vs +53% for SPY", "Captures big moves in a single asset class (gold, tech)", "Only one decision a month"], "fr": ["Meilleur rendement sur la période réservée : +69 % contre +53 % pour le SPY", "Capte les grands mouvements d'une classe d'actifs (or, tech)", "Une seule décision par mois"]},
+   "cons": {"en": ["Concentrated: three positions of 33%", "Bigger drops than SPY in the reserved period (31% vs 19%)", "Well behind SPY over the seven research years (5% a year vs 14%)"], "fr": ["Concentré : trois positions de 33 %", "Baisses plus fortes que le SPY sur la période réservée (31 % contre 19 %)", "Loin derrière le SPY sur les sept années de recherche (5 % par an contre 14 %)"]},
+   "risk": {"en": "Three lines of 33% each: the most concentrated approach here. Highest volatility (about 24% a year recently).", "fr": "Trois lignes de 33 % chacune : l'approche la plus concentrée ici. Volatilité la plus élevée (environ 24 % par an récemment)."},
+   "target": {"en": "A higher excess Sharpe than SPY with a 98% interval above zero (stricter, after five ideas tested), and a smaller drawdown.", "fr": "Un Sharpe hors cash supérieur au SPY avec un intervalle à 98 % au-dessus de zéro (plus strict, après cinq idées testées), et une baisse max plus faible."},
+   "outcome": {"en": "Not met: more return in the reserved period came with more risk, and the research years were weak.", "fr": "Non atteint : le surplus de rendement sur la période réservée est venu avec plus de risque, et les années de recherche étaient faibles."}
+  },
+  {
+   "id": "H2", "key": "meanrev", "results_key": "meanrev", "verdict": "FAIL", "target_met": false, "horizon": {"en": "3 to 10 days", "fr": "3 à 10 jours"},
+   "name": {"en": "Buy the dip (mean reversion)", "fr": "Acheter le repli (retour à la moyenne)"},
+   "tagline": {"en": "Buy a strong market after a sharp two-day drop, sell the rebound.", "fr": "Acheter un marché solide après une forte baisse de deux jours, revendre au rebond."},
+   "how": {"en": "13 index and sector ETFs above their 200-day average; buy after a 2-day RSI below 5; sell above the 5-day average or after 10 days. Five slots of 20%.", "fr": "13 ETF d'indices et de secteurs au-dessus de leur moyenne 200 jours ; achat après un RSI 2 jours sous 5 ; vente au-dessus de la moyenne 5 jours ou après 10 jours. Cinq places de 20 %."},
+   "pros": {"en": ["Short exposure: often in cash", "Small drawdown (about 9%)", "Clear, mechanical rules"], "fr": ["Exposition courte : souvent en cash", "Baisse max faible (environ 9 %)", "Règles claires et mécaniques"]},
+   "cons": {"en": ["Trades a lot: up to 100 times its capital a year, costing 1 to 3% a year", "Lowest risk-adjusted return of the daily approaches (Sharpe 0.38 vs 0.74)"], "fr": ["Beaucoup de transactions : jusqu'à 100 fois son capital par an, soit 1 à 3 % de frais par an", "Le plus faible rendement ajusté du risque des approches journalières (Sharpe 0,38 contre 0,74)"]},
+   "risk": {"en": "At most 5 positions of 20%; each held 1 to 10 days. Only ETFs in an uptrend.", "fr": "Au plus 5 positions de 20 % ; chacune gardée 1 à 10 jours. Uniquement des ETF en tendance haussière."},
+   "target": {"en": "A higher Sharpe than SPY with a 90% interval above zero, and a smaller drawdown.", "fr": "Un Sharpe supérieur au SPY avec un intervalle à 90 % au-dessus de zéro, et une baisse max plus faible."},
+   "outcome": {"en": "Not met: smaller drawdown, but trading costs left the Sharpe well below SPY's.", "fr": "Non atteint : baisse max plus faible, mais les frais ont laissé le Sharpe bien en dessous du SPY."}
+  },
+  {
+   "id": "H0", "key": "orb", "results_key": null, "verdict": "FAIL", "target_met": false, "horizon": {"en": "Minutes to hours (day trading)", "fr": "Minutes à heures (day trading)"},
+   "name": {"en": "Opening-range breakout (day trading)", "fr": "Cassure du range d'ouverture (day trading)"},
+   "tagline": {"en": "The strategy of the original day-trading repo that started this experiment.", "fr": "La stratégie du repo de day trading à l'origine de cette expérience."},
+   "how": {"en": "Buy the first 5-minute close above the first 15 minutes' range; stop at the range's midpoint; target one times the risk; flat by the close. 50 US stocks and ETFs.", "fr": "Acheter la première clôture 5 minutes au-dessus du range des 15 premières minutes ; stop au milieu du range ; cible une fois le risque ; tout fermé avant la clôture. 50 actions et ETF américains."},
+   "pros": {"en": ["Strict risk per trade (0.25% of the account) and a daily loss limit", "No overnight risk", "Reproduced the original repo's results exactly"], "fr": ["Risque par trade strict (0,25 % du compte) et limite de perte journalière", "Aucun risque de nuit", "Reproduit exactement les résultats du repo d'origine"]},
+   "cons": {"en": ["Costs are 15 to 20% of the intraday move", "-0.09R per trade after costs over 10,954 trades", "Needs a screen during market hours"], "fr": ["Les frais représentent 15 à 20 % du mouvement intraday", "-0,09R par trade après frais sur 10 954 trades", "Demande d'être devant l'écran pendant la séance"]},
+   "risk": {"en": "0.25% of the account at risk per trade, 2 positions at most, 1% daily loss limit, flat every evening.", "fr": "0,25 % du compte risqué par trade, 2 positions au plus, limite de perte de 1 % par jour, tout fermé chaque soir."},
+   "target": {"en": "A positive expectancy after costs, with a 95% interval above zero.", "fr": "Une espérance positive après frais, avec un intervalle à 95 % au-dessus de zéro."},
+   "outcome": {"en": "Not met: a simulated $5,000 account lost 20% over 18 months while SPY gained 25%. Even at zero cost it made +7%.", "fr": "Non atteint : un compte simulé de 5 000 $ a perdu 20 % en 18 mois quand le SPY gagnait 25 %. Même à frais nuls, +7 %."},
+   "static_numbers": {"period": "2024-10 to 2026-04", "trades": 10954, "return_pct": -20.1, "spy_return_pct": 25.1, "max_drawdown_pct": 22.6}
+  }
+ ]
+}
